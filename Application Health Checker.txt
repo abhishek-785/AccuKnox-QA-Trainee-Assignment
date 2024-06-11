@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# URL of the application to check
+APP_URL="http://wisecow-service.com"
+
+# Define the log file for the health check results
+LOG_FILE="/var/log/app_health_check.log"
+
+# Function to check the application status
+check_application() {
+  # Send a request to the application URL and get the HTTP status code
+  HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" "$APP_URL")
+
+  # Check if the status code indicates the application is 'up' or 'down'
+  if [ "$HTTP_STATUS" -eq 200 ]; then
+    echo "Application is UP. Status code: $HTTP_STATUS" | tee -a $LOG_FILE
+  else
+    echo "Application is DOWN. Status code: $HTTP_STATUS" | tee -a $LOG_FILE
+  fi
+}
+
+# Main function to run the health check
+main() {
+  echo "Application Health Check - $(date)"
+  check_application
+  echo "----------------------------------------"
+}
